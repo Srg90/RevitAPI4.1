@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace RevitAPI4._1
 {
@@ -37,10 +38,30 @@ namespace RevitAPI4._1
                 wallInfo += $"{wallName}\t{wallVol}{Environment.NewLine}";
             }
 
-            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string csvPath = Path.Combine(desktopPath, "wallInfo.csv");
+            //string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            //string csvPath = Path.Combine(desktopPath, "wallInfo.csv");
 
-            File.WriteAllText(csvPath, wallInfo);
+            //File.WriteAllText(csvPath, wallInfo);
+
+            var saveDialog = new SaveFileDialog
+            {
+                OverwritePrompt = true,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                Filter = "All files (*.*)|*.*",
+                FileName = "wallInfo.csv",
+                DefaultExt = ".csv"
+            };
+
+            string selectedFilePath = string.Empty;
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                selectedFilePath = saveDialog.FileName;
+            }
+
+            if (string.IsNullOrEmpty(selectedFilePath))
+                return Result.Cancelled;
+
+            File.WriteAllText(selectedFilePath, wallInfo);
 
             TaskDialog.Show("Selection", "Данные успешно записаны");
 
